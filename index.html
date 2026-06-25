@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tuscany Early Care Data Platform</title>
+  <style>
+    :root {
+      --navy: #1E3A5F;
+      --teal: #028090;
+      --seafoam: #00A896;
+      --mint: #02C39A;
+      --gold: #F4A623;
+      --light: #F0F6FA;
+      --white: #FFFFFF;
+      --text: #1A2533;
+      --muted: #5A6B7A;
+      --border: #D0DDE8;
+      --red: #C0392B;
+      --green: #27AE60;
+      --amber: #E67E22;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Calibri, Arial, sans-serif; background: #F4F7FA; color: var(--text); min-height: 100vh; }
+
+    /* ── Shell ── */
+    .shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px; min-width: 240px; background: var(--navy);
+      display: flex; flex-direction: column; color: var(--white);
+    }
+    .sidebar-logo {
+      padding: 20px 18px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .sidebar-logo .brand { font-size: 13px; font-weight: 700; letter-spacing: .5px; color: var(--gold); text-transform: uppercase; }
+    .sidebar-logo .tagline { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 2px; line-height: 1.3; }
+    .sidebar-section { padding: 16px 0 4px 16px; font-size: 10px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,.35); text-transform: uppercase; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 18px; cursor: pointer; border-radius: 0;
+      font-size: 13.5px; color: rgba(255,255,255,.75);
+      transition: background .15s, color .15s;
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.07); color: var(--white); }
+    .nav-item.active { background: rgba(2,192,154,.15); color: var(--mint); border-left-color: var(--mint); }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto; background: var(--gold); color: var(--navy);
+      font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px;
+    }
+    .sidebar-bottom {
+      margin-top: auto; padding: 14px 18px; border-top: 1px solid rgba(255,255,255,.1);
+      font-size: 12px; color: rgba(255,255,255,.45);
+    }
+
+    /* ── Main ── */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .topbar {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 54px; display: flex; align-items: center; gap: 16px;
+      flex-shrink: 0;
+    }
+    .topbar-title { font-size: 16px; font-weight: 700; color: var(--navy); flex: 1; }
+    .topbar-pill {
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px;
+      background: rgba(2,192,154,.12); color: var(--teal); letter-spacing: .3px;
+    }
+    .topbar-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--navy); color: var(--gold);
+      font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+    .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+    /* ── Views (shown/hidden) ── */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ── Overview / Home ── */
+    .welcome-banner {
+      background: linear-gradient(120deg, var(--navy) 0%, #1a4a6b 60%, var(--teal) 100%);
+      border-radius: 12px; padding: 28px 32px; color: var(--white); margin-bottom: 24px;
+      position: relative; overflow: hidden;
+    }
+    .welcome-banner::after {
+      content: ''; position: absolute; right: -40px; top: -40px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(255,255,255,.04);
+    }
+    .welcome-banner h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .welcome-banner p { font-size: 13.5px; color: rgba(255,255,255,.75); max-width: 520px; line-height: 1.5; }
+
+    .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--white); border-radius: 10px; padding: 16px 18px;
+      border: 1px solid var(--border);
+    }
+    .stat-card .label { font-size: 11.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
+    .stat-card .value { font-size: 26px; font-weight: 700; color: var(--navy); line-height: 1; }
+    .stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .stat-card .change { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; margin-top: 5px; }
+    .change.up { color: var(--green); }
+    .change.down { color: var(--red); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+    .card {
+      background: var(--white); border-radius: 10px;
+      border: 1px solid var(--border); overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-header h3 { font-size: 14px; font-weight: 700; color: var(--navy); }
+    .card-header .hint { font-size: 11.5px; color: var(--muted); }
+    .card-body { padding: 16px 18px; }
+
+    /* ── Module Grid ── */
+    .module-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px; }
+    .module-card {
+      background: var(--white); border-radius: 10px; border: 1px solid var(--border);
+      padding: 16px 18px; cursor: pointer; transition: box-shadow .15s, border-color .15s;
+    }
+    .module-card:hover { box-shadow: 0 4px 16px rgba(30,58,95,.1); border-color: var(--teal); }
+    .module-card.addon { border-top: 3px solid var(--gold); }
+    .module-card.core  { border-top: 3px solid var(--mint); }
+    .module-icon { font-size: 22px; margin-bottom: 8px; }
+    .module-name { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .module-desc { font-size: 12px; color: var(--muted); line-height: 1.45; }
+    .module-tag {
+      display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px;
+      border-radius: 8px; margin-top: 8px; text-transform: uppercase; letter-spacing: .4px;
+    }
+    .tag-core { background: rgba(2,192,154,.12); color: var(--teal); }
+    .tag-addon { background: rgba(244,166,35,.15); color: #B07D00; }
+
+    /* ── Map placeholder ── */
+    .map-container {
+      background: #E8F0F5; border-radius: 8px; height: 260px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .map-svg { width: 100%; height: 100%; }
+
+    /* ── Saturation view ── */
+    .zone-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .zone-table th {
+      text-align: left; padding: 8px 12px; background: var(--light);
+      font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 700;
+    }
+    .zone-table td { padding: 9px 12px; border-top: 1px solid var(--border); }
+    .zone-table tr:hover td { background: var(--light); }
+    .sat-pill {
+      display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 700;
+    }
+    .sat-under { background: rgba(39,174,96,.12); color: #1E8449; }
+    .sat-over  { background: rgba(192,57,43,.12); color: var(--red); }
+    .sat-bal   { background: rgba(230,126,34,.12); color: var(--amber); }
+
+    /* ── Sentiment bars ── */
+    .sentiment-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; }
+    .sent-label { width: 140px; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sent-bar-track { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .sent-bar-fill { height: 100%; border-radius: 4px; }
+    .sent-score { width: 36px; text-align: right; font-weight: 700; color: var(--navy); }
+    .sent-trend { width: 50px; font-size: 11px; font-weight: 600; }
+
+    /* ── Mystery shop table ── */
+    .shop-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+    .shop-cell { background: var(--white); padding: 10px; font-size: 12px; }
+    .shop-header { background: var(--navy); color: var(--white); font-size: 11px; font-weight: 700; text-align: center; padding: 8px; }
+    .shop-grade { font-size: 18px; font-weight: 700; text-align: center; }
+    .grade-a { color: var(--green); }
+    .grade-b { color: var(--teal); }
+    .grade-c { color: var(--amber); }
+    .grade-d { color: var(--red); }
+
+    /* ── UPK tracker ── */
+    .upk-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .upk-state { width: 100px; font-weight: 700; color: var(--navy); }
+    .upk-status { flex: 1; }
+    .upk-funding { width: 80px; text-align: right; font-weight: 700; color: var(--teal); }
+    .upk-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 8px; text-transform: uppercase;
+    }
+    .upk-tailwind { background: rgba(2,192,154,.12); color: var(--teal); }
+    .upk-headwind { background: rgba(192,57,43,.12); color: var(--red); }
+    .upk-neutral  { background: rgba(90,107,122,.1); color: var(--muted); }
+
+    /* ── Benchmark dashboard ── */
+    .bench-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .bench-card { background: var(--light); border-radius: 8px; padding: 14px 16px; text-align: center; }
+    .bench-metric { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
+    .bench-bar { position: relative; height: 6px; background: var(--border); border-radius: 3px; margin: 8px 0; }
+    .bench-fill { height: 100%; border-radius: 3px; background: var(--teal); }
+    .bench-peer { position: absolute; top: -3px; height: 12px; width: 2px; background: var(--navy); }
+    .bench-you  { font-size: 24px; font-weight: 700; color: var(--navy); }
+    .bench-peer-label { font-size: 11px; color: var(--muted); }
+
+    /* ── Customer sentiment study ── */
+    .driver-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .driver-rank { width: 24px; height: 24px; border-radius: 50%; background: var(--navy); color: var(--white); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .driver-name { flex: 1; font-weight: 600; color: var(--navy); }
+    .driver-impact { display: flex; align-items: center; gap: 6px; }
+    .impact-bar { width: 90px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .impact-fill { height: 100%; border-radius: 4px; }
+    .impact-pct { font-size: 12px; font-weight: 700; color: var(--navy); width: 36px; text-align: right; }
+
+    /* ── Competitive position map ── */
+    .comp-map {
+      position: relative; background: var(--light); border-radius: 8px;
+      height: 320px; overflow: hidden;
+    }
+    .comp-axis-x {
+      position: absolute; bottom: 32px; left: 0; right: 0;
+      display: flex; justify-content: space-between; padding: 0 40px;
+      font-size: 11px; color: var(--muted); font-weight: 600;
+    }
+    .comp-axis-y {
+      position: absolute; left: 6px; top: 20px; bottom: 40px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      font-size: 11px; color: var(--muted); font-weight: 600;
+    }
+    .comp-dot {
+      position: absolute; border-radius: 50%;
+      transform: translate(-50%, -50%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; cursor: pointer;
+    }
+    .comp-dot:hover .comp-tooltip { display: block; }
+    .comp-tooltip {
+      display: none; position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+      background: var(--navy); color: var(--white); font-size: 11px; padding: 5px 8px;
+      border-radius: 6px; white-space: nowrap; z-index: 10;
+    }
+
+    /* ── Pricing table ── */
+    .pricing-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pricing-table th { background: var(--navy); color: var(--white); padding: 10px 14px; text-align: left; font-size: 12px; }
+    .pricing-table td { padding: 9px 14px; border-top: 1px solid var(--border); }
+    .pricing-table tr:hover td { background: var(--light); }
+    .price-highlight { font-weight: 700; color: var(--navy); }
+
+    /* ── Alert feed ── */
+    .alert-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .alert-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+    .alert-red { background: var(--red); }
+    .alert-amber { background: var(--amber); }
+    .alert-green { background: var(--green); }
+    .alert-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+    .alert-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Use cases ── */
+    .usecase-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .usecase-card { background: var(--white); border-radius: 10px; border: 1px solid var(--border); padding: 18px; cursor: pointer; transition: box-shadow .15s; }
+    .usecase-card:hover { box-shadow: 0 4px 16px rgba(30,58,95,.1); }
+    .usecase-icon { font-size: 26px; margin-bottom: 8px; }
+    .usecase-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
+    .usecase-desc { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+
+    /* ── Footer note ── */
+    .footnote { font-size: 11px; color: var(--muted); margin-top: 12px; font-style: italic; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+    .tab { padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; }
+    .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Scrollbar ── */
+    .content::-webkit-scrollbar { width: 6px; }
+    .content::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">Tuscany Strategy</div>
+      <div class="tagline">Early Care Data Platform</div>
+    </div>
+
+    <div class="sidebar-section">Core Modules</div>
+    <div class="nav-item active" onclick="showView('overview', this)">
+      <span class="icon">🏠</span> Overview
+    </div>
+    <div class="nav-item" onclick="showView('saturation', this)">
+      <span class="icon">🗺️</span> Saturation Index
+    </div>
+    <div class="nav-item" onclick="showView('upk', this)">
+      <span class="icon">📜</span> Pre-K Tracker
+    </div>
+    <div class="nav-item" onclick="showView('sentiment', this)">
+      <span class="icon">💬</span> Sentiment Monitor
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="showView('benchmark', this)">
+      <span class="icon">📊</span> Benchmarks
+    </div>
+    <div class="nav-item" onclick="showView('database', this)">
+      <span class="icon">🏫</span> Provider Database
+    </div>
+    <div class="nav-item" onclick="showView('demographics', this)">
+      <span class="icon">👶</span> Demographics
+    </div>
+
+    <div class="sidebar-section">Add-On Modules</div>
+    <div class="nav-item" onclick="showView('competitive', this)">
+      <span class="icon">⚔️</span> Competitive Assessment
+    </div>
+    <div class="nav-item" onclick="showView('mystery', this)">
+      <span class="icon">🔍</span> Mystery Shopping
+    </div>
+    <div class="nav-item" onclick="showView('study', this)">
+      <span class="icon">📋</span> Sentiment Study
+    </div>
+    <div class="nav-item" onclick="showView('ai', this)">
+      <span class="icon">🤖</span> AI Training
+    </div>
+
+    <div class="sidebar-section">Platform</div>
+    <div class="nav-item" onclick="showView('usecases', this)">
+      <span class="icon">💡</span> Use Cases
+    </div>
+    <div class="nav-item" onclick="showView('pricing', this)">
+      <span class="icon">💲</span> Pricing
+    </div>
+
+    <div class="sidebar-bottom">
+      Tuscany Strategy Consulting<br>tsc.tuscany.com
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Platform Overview</div>
+      <div class="topbar-pill">Live Demo</div>
+      <div class="topbar-avatar">VV</div>
+    </div>
+
+    <div class="content">
+
+      <!-- ========== OVERVIEW ========== -->
+      <div class="view active" id="view-overview">
+        <div class="welcome-banner">
+          <h1>Early Care Data Services</h1>
+          <p>Bringing the key data insights you need, all in one place, to make high-stakes decisions with confidence. 7 integrated modules — buy individually or as a complete platform.</p>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="label">Schools in Database</div>
+            <div class="value">12,700+</div>
+            <div class="sub">Tier 3–5 ECE providers</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Brands Tracked</div>
+            <div class="value">1,400</div>
+            <div class="sub">National &amp; regional chains</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">States Covered</div>
+            <div class="value">50</div>
+            <div class="sub">Pre-K policy &amp; licensing data</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Client Re-Engagement</div>
+            <div class="value">85%+</div>
+            <div class="sub">Multi-project or long-term</div>
+          </div>
+        </div>
+
+        <div class="module-grid">
+          <!-- Core -->
+          <div class="module-card core" onclick="showView('saturation', document.querySelector('[onclick*=saturation]'))">
+            <div class="module-icon">🗺️</div>
+            <div class="module-name">Supply/Demand Saturation</div>
+            <div class="module-desc">Neighborhood-level scoring of Tier 4/5 capacity vs. demand. Find white space before competitors do.</div>
+            <span class="module-tag tag-core">Core · $15K/yr</span>
+          </div>
+          <div class="module-card core" onclick="showView('upk', document.querySelector('[onclick*=upk]'))">
+            <div class="module-icon">📜</div>
+            <div class="module-name">50 State Pre-K Tracker</div>
+            <div class="module-desc">Live policy database covering all 50 states — tailwinds, headwinds, funding, and real-time news alerts.</div>
+            <span class="module-tag tag-core">Core · $15K/yr</span>
+          </div>
+          <div class="module-card core" onclick="showView('sentiment', document.querySelector('[onclick*=sentiment]'))">
+            <div class="module-icon">💬</div>
+            <div class="module-name">Online Sentiment Monitor</div>
+            <div class="module-desc">Always-on tracking across Google, Facebook, Winnie, and Care.com. Alerts before enrollment drops.</div>
+            <span class="module-tag tag-core">Core · $45/center/mo</span>
+          </div>
+          <div class="module-card core" onclick="showView('benchmark', document.querySelector('[onclick*=benchmark]'))">
+            <div class="module-icon">📊</div>
+            <div class="module-name">Operational Benchmarks</div>
+            <div class="module-desc">Compare tour-to-enrollment conversion, occupancy, staff ratios, and NPS against blinded peer data.</div>
+            <span class="module-tag tag-core">Core</span>
+          </div>
+          <div class="module-card core" onclick="showView('database', document.querySelector('[onclick*=database]'))">
+            <div class="module-icon">🏫</div>
+            <div class="module-name">Tiered Provider Database</div>
+            <div class="module-desc">Identify all major ECE providers in any U.S. market, with Tuscany quality tier classification.</div>
+            <span class="module-tag tag-core">Core</span>
+          </div>
+          <div class="module-card core" onclick="showView('demographics', document.querySelector('[onclick*=demographics]'))">
+            <div class="module-icon">👶</div>
+            <div class="module-name">Demographic Landscape</div>
+            <div class="module-desc">Under-5 population, household income, commute patterns, and employment data by catchment area.</div>
+            <span class="module-tag tag-core">Core</span>
+          </div>
+          <!-- Add-ons -->
+          <div class="module-card addon" onclick="showView('competitive', document.querySelector('[onclick*=competitive]'))">
+            <div class="module-icon">⚔️</div>
+            <div class="module-name">Competitive Performance Assessment</div>
+            <div class="module-desc">Price &amp; quality benchmarks vs. local competitors on factors parents weigh most.</div>
+            <span class="module-tag tag-addon">Add-On · $3,500/site</span>
+          </div>
+          <div class="module-card addon" onclick="showView('mystery', document.querySelector('[onclick*=mystery]'))">
+            <div class="module-icon">🔍</div>
+            <div class="module-name">Managed Mystery Shopping</div>
+            <div class="module-desc">First-hand assessment of your tours and competitors' — phone and in-person.</div>
+            <span class="module-tag tag-addon">Add-On · $75/call</span>
+          </div>
+          <div class="module-card addon" onclick="showView('study', document.querySelector('[onclick*=study]'))">
+            <div class="module-icon">📋</div>
+            <div class="module-name">Customer Sentiment Study</div>
+            <div class="module-desc">Quantify what drives enrollment, retention, and referral among current and prospective families.</div>
+            <span class="module-tag tag-addon">Add-On · from $29K</span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>Recent Alerts</h3><span class="hint">Last 7 days</span></div>
+            <div class="card-body">
+              <div class="alert-item">
+                <div class="alert-dot alert-red"></div>
+                <div>
+                  <div class="alert-text"><strong>Colleyville E</strong> — negative review spike on Google (3 reviews, avg 2.1★ this week)</div>
+                  <div class="alert-time">2 hours ago</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot alert-amber"></div>
+                <div>
+                  <div class="alert-text"><strong>Texas Pre-K bill HB 4201</strong> — proposed expansion of UPK eligibility to 3-year-olds. Monitor for private operator impact.</div>
+                  <div class="alert-time">1 day ago</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot alert-green"></div>
+                <div>
+                  <div class="alert-text"><strong>Cibolo</strong> — mystery shop complete. Overall score: B+. Competitor pricing data ready.</div>
+                  <div class="alert-time">3 days ago</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot alert-amber"></div>
+                <div>
+                  <div class="alert-text"><strong>McKinney trade area</strong> — 2 new Tier 4/5 centers opened in 30-min drive radius. Saturation index updated.</div>
+                  <div class="alert-time">5 days ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Portfolio Snapshot</h3><span class="hint">12 active schools</span></div>
+            <div class="card-body">
+              <table class="zone-table">
+                <thead><tr><th>School</th><th>Utilization</th><th>Parent NPS</th><th>Sat. Status</th></tr></thead>
+                <tbody>
+                  <tr><td>Colleyville E</td><td>76%</td><td>55</td><td><span class="sat-pill sat-bal">Balanced</span></td></tr>
+                  <tr><td>Reed</td><td>84%</td><td>25</td><td><span class="sat-pill sat-under">Underserved</span></td></tr>
+                  <tr><td>Cibolo</td><td>87%</td><td>38</td><td><span class="sat-pill sat-under">Underserved</span></td></tr>
+                  <tr><td>Mt. Peak</td><td>91%</td><td>30</td><td><span class="sat-pill sat-under">Underserved</span></td></tr>
+                  <tr><td>Walnut Grove</td><td>78%</td><td>31</td><td><span class="sat-pill sat-over">Saturated</span></td></tr>
+                  <tr><td>Bandera</td><td>73%</td><td>37</td><td><span class="sat-pill sat-bal">Balanced</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SATURATION INDEX ========== -->
+      <div class="view" id="view-saturation">
+        <div class="grid-2" style="margin-bottom:0">
+          <div class="card">
+            <div class="card-header"><h3>Baltimore MSA — Saturation Index</h3><span class="hint">Tier 4/5 Supply vs. Demand</span></div>
+            <div class="card-body">
+              <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Estimated High-HHI Under-5 Population: <strong style="color:var(--navy)">22,000</strong> &nbsp;·&nbsp; Tier 4/5 Centers: <strong style="color:var(--navy)">77</strong></div>
+              <!-- SVG map mockup -->
+              <div class="map-container">
+                <svg class="map-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                  <!-- simplified zone shapes -->
+                  <rect x="20" y="20" width="80" height="60" rx="6" fill="#27AE6033" stroke="#27AE60" stroke-width="1.5"/>
+                  <text x="60" y="54" text-anchor="middle" font-size="10" fill="#1E8449" font-weight="700">Columbia</text>
+                  <text x="60" y="66" text-anchor="middle" font-size="9" fill="#1E8449">Underserved</text>
+
+                  <rect x="115" y="20" width="80" height="60" rx="6" fill="#C0392B22" stroke="#C0392B" stroke-width="1.5"/>
+                  <text x="155" y="54" text-anchor="middle" font-size="10" fill="#C0392B" font-weight="700">Inner Harbor</text>
+                  <text x="155" y="66" text-anchor="middle" font-size="9" fill="#C0392B">Saturated</text>
+
+                  <rect x="210" y="20" width="80" height="60" rx="6" fill="#E67E2222" stroke="#E67E22" stroke-width="1.5"/>
+                  <text x="250" y="54" text-anchor="middle" font-size="10" fill="#B07D00" font-weight="700">Ellicott City</text>
+                  <text x="250" y="66" text-anchor="middle" font-size="9" fill="#B07D00">Balanced</text>
+
+                  <rect x="305" y="20" width="80" height="60" rx="6" fill="#27AE6033" stroke="#27AE60" stroke-width="1.5"/>
+                  <text x="345" y="54" text-anchor="middle" font-size="10" fill="#1E8449" font-weight="700">Towson</text>
+                  <text x="345" y="66" text-anchor="middle" font-size="9" fill="#1E8449">Underserved</text>
+
+                  <rect x="20" y="100" width="80" height="60" rx="6" fill="#E67E2222" stroke="#E67E22" stroke-width="1.5"/>
+                  <text x="60" y="134" text-anchor="middle" font-size="10" fill="#B07D00" font-weight="700">Catonsville</text>
+                  <text x="60" y="146" text-anchor="middle" font-size="9" fill="#B07D00">Balanced</text>
+
+                  <rect x="115" y="100" width="80" height="60" rx="6" fill="#C0392B22" stroke="#C0392B" stroke-width="1.5"/>
+                  <text x="155" y="134" text-anchor="middle" font-size="10" fill="#C0392B" font-weight="700">Dundalk</text>
+                  <text x="155" y="146" text-anchor="middle" font-size="9" fill="#C0392B">Saturated</text>
+
+                  <rect x="210" y="100" width="80" height="60" rx="6" fill="#27AE6044" stroke="#27AE60" stroke-width="2"/>
+                  <text x="250" y="130" text-anchor="middle" font-size="10" fill="#1E8449" font-weight="700">Pikesville</text>
+                  <text x="250" y="142" text-anchor="middle" font-size="9" fill="#1E8449">Strong</text>
+                  <text x="250" y="154" text-anchor="middle" font-size="9" fill="#1E8449">Opportunity</text>
+
+                  <rect x="305" y="100" width="80" height="60" rx="6" fill="#27AE6033" stroke="#27AE60" stroke-width="1.5"/>
+                  <text x="345" y="134" text-anchor="middle" font-size="10" fill="#1E8449" font-weight="700">Bel Air</text>
+                  <text x="345" y="146" text-anchor="middle" font-size="9" fill="#1E8449">Underserved</text>
+
+                  <!-- Legend -->
+                  <rect x="20" y="175" width="12" height="12" rx="2" fill="#27AE6033" stroke="#27AE60"/>
+                  <text x="36" y="185" font-size="9" fill="#5A6B7A">Underserved / Opportunity</text>
+                  <rect x="160" y="175" width="12" height="12" rx="2" fill="#E67E2222" stroke="#E67E22"/>
+                  <text x="176" y="185" font-size="9" fill="#5A6B7A">Balanced</text>
+                  <rect x="240" y="175" width="12" height="12" rx="2" fill="#C0392B22" stroke="#C0392B"/>
+                  <text x="256" y="185" font-size="9" fill="#5A6B7A">Saturated</text>
+                </svg>
+              </div>
+              <div class="footnote">Index = (High-HHI Under-5 Population) / (Tier 4/5 Capacity). Green = growth potential. Red = oversupply risk.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Sub-Region Detail</h3><span class="hint">Upscale &amp; Premium split</span></div>
+            <div class="card-body">
+              <table class="zone-table">
+                <thead>
+                  <tr><th>Zone</th><th>Demand Score</th><th>Tier 4 Supply</th><th>Tier 5 Supply</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Columbia</td><td>8.4</td><td>3</td><td>1</td><td><span class="sat-pill sat-under">Underserved</span></td></tr>
+                  <tr><td>Inner Harbor</td><td>6.1</td><td>14</td><td>8</td><td><span class="sat-pill sat-over">Saturated</span></td></tr>
+                  <tr><td>Ellicott City</td><td>7.8</td><td>6</td><td>3</td><td><span class="sat-pill sat-bal">Balanced</span></td></tr>
+                  <tr><td>Towson</td><td>9.1</td><td>2</td><td>1</td><td><span class="sat-pill sat-under">Underserved</span></td></tr>
+                  <tr><td>Catonsville</td><td>6.9</td><td>5</td><td>2</td><td><span class="sat-pill sat-bal">Balanced</span></td></tr>
+                  <tr><td>Dundalk</td><td>4.2</td><td>9</td><td>5</td><td><span class="sat-pill sat-over">Saturated</span></td></tr>
+                  <tr><td><strong>Pikesville</strong></td><td><strong>9.6</strong></td><td><strong>1</strong></td><td><strong>0</strong></td><td><span class="sat-pill sat-under" style="background:rgba(39,174,96,.25)">Strong Opp.</span></td></tr>
+                  <tr><td>Bel Air</td><td>8.0</td><td>4</td><td>1</td><td><span class="sat-pill sat-under">Underserved</span></td></tr>
+                </tbody>
+              </table>
+              <div class="footnote">Demand score 1–10. Higher = stronger unmet demand relative to current Tier 4/5 supply.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== UPK TRACKER ========== -->
+      <div class="view" id="view-upk">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'upk-states')">State Overview</div>
+          <div class="tab" onclick="switchTab(this,'upk-news')">Policy News Feed</div>
+        </div>
+        <div class="tab-panel active" id="tab-upk-states">
+          <div class="card">
+            <div class="card-header"><h3>50-State UPK Policy Tracker</h3><span class="hint">Updated June 2026</span></div>
+            <div class="card-body">
+              <div class="upk-row" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:4px 0;">
+                <div style="width:100px">State</div>
+                <div style="flex:1">Policy Status</div>
+                <div style="width:120px">Private Participation</div>
+                <div style="width:80px;text-align:right">Annual Funding</div>
+                <div style="width:80px;text-align:right">Outlook</div>
+              </div>
+              <div class="upk-row">
+                <div class="upk-state">Texas</div>
+                <div class="upk-status" style="font-size:13px;color:var(--muted)">Partial UPK — income-eligible 4-year-olds; expansion legislation pending</div>
+                <div style="width:120px;font-size:12px;color:var(--teal)">Mixed delivery ✓</div>
+                <div class="upk-funding">$1.2B</div>
+                <div style="width:80px;text-align:right"><span class="upk-badge upk-tailwind">Tailwind</span></div>
+              </div>
+              <div class="upk-row">
+                <div class="upk-state">New York</div>
+                <div class="upk-status" style="font-size:13px;color:var(--muted)">Universal Pre-K for all 4-year-olds (NYC); statewide expansion underway</div>
+                <div style="width:120px;font-size:12px;color:var(--teal)">Community-based ✓</div>
+                <div class="upk-funding">$4.8B</div>
+                <div style="width:80px;text-align:right"><span class="upk-badge upk-headwind">Headwind</span></div>
+              </div>
+              <div class="upk-row">
+                <div class="upk-state">Florida</div>
+                <div class="upk-status" style="font-size:13px;color:var(--muted)">Voluntary UPK for all 4-year-olds; private providers participate widely</div>
+                <div style="width:120px;font-size:12px;color:var(--teal)">Private providers ✓</div>
+                <div class="upk-funding">$967M</div>
+                <div style="width:80px;text-align:right"><span class="upk-badge upk-tailwind">Tailwind</span></div>
+              </div>
+              <div class="upk-row">
+                <div class="upk-state">California</div>
+                <div class="upk-status" style="font-size:13px;color:var(--muted)">Transitional Kinder expansion; TK-focused, limited 3-year-old coverage</div>
+                <div style="width:120px;font-size:12px;color:var(--red)">Limited private</div>
+                <div class="upk-funding">$2.1B</div>
+                <div style="width:80px;text-align:right"><span class="upk-badge upk-headwind">Headwind</span></div>
+              </div>
+              <div class="upk-row">
+                <div class="upk-state">Georgia</div>
+                <div class="upk-status" style="font-size:13px;color:var(--muted)">Pre-K for all 4-year-olds via lottery; private providers can participate</div>
+                <div style="width:120px;font-size:12px;color:var(--teal)">Private lottery ✓</div>
+                <div class="upk-funding">$420M</div>
+                <div style="width:80px;text-align:right"><span class="upk-badge upk-tailwind">Tailwind</span></div>
+              </div>
+              <div class="upk-row">
+                <div class="upk-state">Illinois</div>
+                <div class="upk-status" style="font-size:13px;color:var(--muted)">Preschool for All — income-eligible; mixed delivery model growing</div>
+                <div style="width:120px;font-size:12px;color:var(--teal)">Mixed delivery ✓</div>
+                <div class="upk-funding">$613M</div>
+                <div style="width:80px;text-align:right"><span class="upk-badge upk-neutral">Neutral</span></div>
+              </div>
+              <div class="upk-row">
+                <div class="upk-state">Colorado</div>
+                <div class="upk-status" style="font-size:13px;color:var(--muted)">Universal Pre-K launched 2023 — 10 hrs/wk free for all 4-year-olds</div>
+                <div style="width:120px;font-size:12px;color:var(--teal)">Community-based ✓</div>
+                <div class="upk-funding">$321M</div>
+                <div style="width:80px;text-align:right"><span class="upk-badge upk-neutral">Neutral</span></div>
+              </div>
+              <div class="upk-row">
+                <div class="upk-state">Tennessee</div>
+                <div class="upk-status" style="font-size:13px;color:var(--muted)">Voluntary Pre-K — income-eligible; limited seats, waitlists common</div>
+                <div style="width:120px;font-size:12px;color:var(--red)">Public only</div>
+                <div class="upk-funding">$122M</div>
+                <div style="width:80px;text-align:right"><span class="upk-badge upk-tailwind">Tailwind</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-upk-news">
+          <div class="card">
+            <div class="card-header"><h3>Policy News Feed</h3><span class="hint">Real-time legislative alerts</span></div>
+            <div class="card-body">
+              <div class="alert-item">
+                <div class="alert-dot alert-amber"></div>
+                <div>
+                  <div class="alert-text"><strong>TX HB 4201</strong> — Proposed expansion of state Pre-K eligibility to all income-qualified 3-year-olds. Hearing scheduled July 2026. Could reduce Tier 4/5 demand for 3YO classrooms in mixed-delivery districts.</div>
+                  <div class="alert-time">June 24, 2026</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot alert-green"></div>
+                <div>
+                  <div class="alert-text"><strong>CO UPK 2026–27 Rates</strong> — Colorado published updated reimbursement rates for community-based UPK providers. Rates increased 8% YoY — net positive for private operators in Colorado.</div>
+                  <div class="alert-time">June 20, 2026</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot alert-red"></div>
+                <div>
+                  <div class="alert-text"><strong>CA Budget Cuts</strong> — California Gov. proposed $340M reduction to transitional kindergarten expansion. Enrollment targets for 2026–27 may not be met, reducing competitive pressure from TK on Tier 4/5 in Southern CA.</div>
+                  <div class="alert-time">June 18, 2026</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot alert-green"></div>
+                <div>
+                  <div class="alert-text"><strong>GA Pre-K Voucher Study</strong> — Georgia legislature considering pilot program for Pre-K vouchers redeemable at Tier 4/5 providers. Final vote expected September 2026.</div>
+                  <div class="alert-time">June 12, 2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SENTIMENT MONITOR ========== -->
+      <div class="view" id="view-sentiment">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'sent-client')">Your Schools</div>
+          <div class="tab" onclick="switchTab(this,'sent-comp')">Competitors</div>
+          <div class="tab" onclick="switchTab(this,'sent-alerts')">Alerts <span style="background:var(--red);color:#fff;border-radius:8px;padding:1px 6px;font-size:10px;margin-left:4px">3</span></div>
+        </div>
+        <div class="tab-panel active" id="tab-sent-client">
+          <div class="card">
+            <div class="card-header"><h3>Parent Sentiment — Your Schools</h3><span class="hint">Google · Facebook · Winnie · Care.com</span></div>
+            <div class="card-body">
+              <div style="display:flex;gap:8px;margin-bottom:16px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:0 0 4px 0;border-bottom:1px solid var(--border)">
+                <span style="width:140px">School</span>
+                <span style="flex:1">30-Day Trend</span>
+                <span style="width:36px;text-align:right">NPS</span>
+                <span style="width:50px;text-align:right">Trend</span>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label">Mt. Peak</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:93%;background:var(--green)"></div></div>
+                <div class="sent-score">71</div>
+                <div class="sent-trend" style="color:var(--green)">▲ +6</div>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label">Cibolo</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:82%;background:var(--teal)"></div></div>
+                <div class="sent-score">62</div>
+                <div class="sent-trend" style="color:var(--green)">▲ +3</div>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label">Singing Hills</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:75%;background:var(--teal)"></div></div>
+                <div class="sent-score">55</div>
+                <div class="sent-trend" style="color:var(--green)">▲ +2</div>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label">Bandera</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:70%;background:var(--teal)"></div></div>
+                <div class="sent-score">37</div>
+                <div class="sent-trend" style="color:var(--muted)">— 0</div>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label">Colleyville S</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:58%;background:var(--amber)"></div></div>
+                <div class="sent-score">25</div>
+                <div class="sent-trend" style="color:var(--red)">▼ −4</div>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label">Colleyville E</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:52%;background:var(--red)"></div></div>
+                <div class="sent-score">11</div>
+                <div class="sent-trend" style="color:var(--red)">▼ −18 ⚠️</div>
+              </div>
+              <div class="footnote">NPS ≥70 = Excellent · 30–70 = Great · &lt;30 = At Risk. Average NPS for Education (2022): 42.</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-sent-comp">
+          <div class="card">
+            <div class="card-header"><h3>Competitor Sentiment — 30-Day Snapshot</h3><span class="hint">Named competitors in your markets</span></div>
+            <div class="card-body">
+              <div style="display:flex;gap:8px;margin-bottom:16px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:0 0 4px 0;border-bottom:1px solid var(--border)">
+                <span style="width:180px">Competitor</span><span style="flex:1">Sentiment</span><span style="width:36px;text-align:right">NPS</span><span style="width:50px;text-align:right">Trend</span>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label" style="width:180px">Primrose (Market A)</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:88%;background:var(--green)"></div></div>
+                <div class="sent-score">68</div>
+                <div class="sent-trend" style="color:var(--muted)">— 0</div>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label" style="width:180px">Goddard School</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:79%;background:var(--teal)"></div></div>
+                <div class="sent-score">59</div>
+                <div class="sent-trend" style="color:var(--red)">▼ −7</div>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label" style="width:180px">KinderCare</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:55%;background:var(--amber)"></div></div>
+                <div class="sent-score">32</div>
+                <div class="sent-trend" style="color:var(--green)">▲ +5</div>
+              </div>
+              <div class="sentiment-row">
+                <div class="sent-label" style="width:180px">Bright Horizons</div>
+                <div class="sent-bar-track"><div class="sent-bar-fill" style="width:72%;background:var(--teal)"></div></div>
+                <div class="sent-score">51</div>
+                <div class="sent-trend" style="color:var(--muted)">— 0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-sent-alerts">
+          <div class="card">
+            <div class="card-header"><h3>Sentiment Alerts</h3><span class="hint">Requires immediate attention</span></div>
+            <div class="card-body">
+              <div class="alert-item">
+                <div class="alert-dot alert-red"></div>
+                <div>
+                  <div class="alert-text"><strong>Colleyville E</strong> — 3 new 1-star Google reviews in 48 hours. Themes: teacher turnover, communication breakdown. NPS dropped 18 points. Recommend director review.</div>
+                  <div class="alert-time">2 hours ago · Google Reviews</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot alert-amber"></div>
+                <div>
+                  <div class="alert-text"><strong>Colleyville S</strong> — Winnie.com review mentions "long waitlist but unclear communication." Negative trend continuing (-4 pts this month).</div>
+                  <div class="alert-time">1 day ago · Winnie</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot alert-amber"></div>
+                <div>
+                  <div class="alert-text"><strong>Goddard School (Competitor)</strong> — Staff NPS-related mentions spiking on Care.com. Opportunity to target their families in marketing.</div>
+                  <div class="alert-time">3 days ago · Care.com</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== BENCHMARK ========== -->
+      <div class="view" id="view-benchmark">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><h3>Operational Benchmark Dashboard</h3><span class="hint">Your portfolio vs. blinded peer median (Tier 4/5)</span></div>
+          <div class="card-body">
+            <div class="bench-grid">
+              <div class="bench-card">
+                <div class="bench-metric">Avg. Utilization</div>
+                <div class="bench-you">81%</div>
+                <div class="bench-bar"><div class="bench-fill" style="width:81%"></div><div class="bench-peer" style="left:74%"></div></div>
+                <div class="bench-peer-label">Peer median: 74%</div>
+              </div>
+              <div class="bench-card">
+                <div class="bench-metric">Tour → Enrollment</div>
+                <div class="bench-you">34%</div>
+                <div class="bench-bar"><div class="bench-fill" style="width:34%;background:var(--amber)"></div><div class="bench-peer" style="left:41%"></div></div>
+                <div class="bench-peer-label">Peer median: 41% ⚠️</div>
+              </div>
+              <div class="bench-card">
+                <div class="bench-metric">Parent NPS</div>
+                <div class="bench-you">44</div>
+                <div class="bench-bar"><div class="bench-fill" style="width:62%"></div><div class="bench-peer" style="left:58%"></div></div>
+                <div class="bench-peer-label">Peer median: 42</div>
+              </div>
+              <div class="bench-card">
+                <div class="bench-metric">Staff Turnover</div>
+                <div class="bench-you">24%</div>
+                <div class="bench-bar"><div class="bench-fill" style="width:24%;background:var(--amber)"></div><div class="bench-peer" style="left:28%"></div></div>
+                <div class="bench-peer-label">Peer median: 28%</div>
+              </div>
+              <div class="bench-card">
+                <div class="bench-metric">Staff NPS</div>
+                <div class="bench-you">38</div>
+                <div class="bench-bar"><div class="bench-fill" style="width:54%;background:var(--amber)"></div><div class="bench-peer" style="left:55%"></div></div>
+                <div class="bench-peer-label">Peer median: 39</div>
+              </div>
+              <div class="bench-card">
+                <div class="bench-metric">Lead Volume / Site</div>
+                <div class="bench-you">197</div>
+                <div class="bench-bar"><div class="bench-fill" style="width:66%"></div><div class="bench-peer" style="left:61%"></div></div>
+                <div class="bench-peer-label">Peer median: 183</div>
+              </div>
+            </div>
+            <div class="footnote" style="margin-top:16px">Vertical bar (|) = blinded peer median. Data from Tuscany's national ECE operator panel. All peer data de-identified.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== DATABASE ========== -->
+      <div class="view" id="view-database">
+        <div class="stat-row">
+          <div class="stat-card"><div class="label">Total Schools</div><div class="value">12,700+</div><div class="sub">Tier 3–5 nationally</div></div>
+          <div class="stat-card"><div class="label">Brands</div><div class="value">1,400</div><div class="sub">Named chains &amp; franchises</div></div>
+          <div class="stat-card"><div class="label">States</div><div class="value">50</div><div class="sub">Full coverage</div></div>
+          <div class="stat-card"><div class="label">MSAs Covered</div><div class="value">380+</div><div class="sub">Metro statistical areas</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Provider Search — Dallas-Fort Worth Sample</h3><span class="hint">Tier 4 &amp; 5 within 30-min drive</span></div>
+          <div class="card-body">
+            <table class="zone-table">
+              <thead><tr><th>School</th><th>Brand</th><th>Tier</th><th>Est. Weekly Infant Price</th><th>Google Rating</th><th>Waitlist</th></tr></thead>
+              <tbody>
+                <tr><td>Primrose — Southlake</td><td>Primrose Schools</td><td>Tier 5</td><td>$480</td><td>4.8 ★ (312)</td><td>Yes — Infant</td></tr>
+                <tr><td>Crème de la Crème — Frisco</td><td>Crème de la Crème</td><td>Tier 5</td><td>$510</td><td>4.6 ★ (204)</td><td>Yes — All ages</td></tr>
+                <tr><td>KinderCare — Plano</td><td>KinderCare</td><td>Tier 4</td><td>$395</td><td>4.2 ★ (88)</td><td>No</td></tr>
+                <tr><td>The Learning Experience</td><td>TLE</td><td>Tier 4</td><td>$370</td><td>4.4 ★ (117)</td><td>No</td></tr>
+                <tr><td>Lightbridge Academy — Allen</td><td>Lightbridge</td><td>Tier 4</td><td>$415</td><td>4.5 ★ (62)</td><td>Yes — 3YO</td></tr>
+                <tr><td>Knowledge Beginnings</td><td>KnowledgeBeginnings</td><td>Tier 3</td><td>$295</td><td>3.9 ★ (44)</td><td>No</td></tr>
+              </tbody>
+            </table>
+            <div class="footnote">Prices estimated from mystery shopping conducted 2020–2024. Tuscany Quality/Price Tier™ classification applied.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== DEMOGRAPHICS ========== -->
+      <div class="view" id="view-demographics">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>Catchment Area Demographics</h3><span class="hint">30-min drive radius</span></div>
+            <div class="card-body">
+              <table class="zone-table">
+                <thead><tr><th>School</th><th>Median HHI</th><th>% HHI &gt;$200K</th><th>Under-5 Pop.</th><th>Pop. Change</th></tr></thead>
+                <tbody>
+                  <tr><td>Colleyville E</td><td>$154K</td><td>23%</td><td>66</td><td class="change down">▼ −7%</td></tr>
+                  <tr><td>Reed</td><td>$91K</td><td>17%</td><td>22</td><td class="change down">▼ −5%</td></tr>
+                  <tr><td>Cibolo</td><td>$44K</td><td>23%</td><td>9</td><td class="change down">▼ −5%</td></tr>
+                  <tr><td>McKinney</td><td>$70K</td><td>29%</td><td>70</td><td class="change up">▲ +7%</td></tr>
+                  <tr><td>Walnut Grove</td><td>$40K</td><td>32%</td><td>6</td><td class="change down">▼ −6%</td></tr>
+                  <tr><td>Mt. Peak</td><td>$35K</td><td>31%</td><td>6</td><td class="change down">▼ −3%</td></tr>
+                </tbody>
+              </table>
+              <div class="footnote">Under-5 population in thousands. Source: US Census, Lightcast 2024.3</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>U.S. Market Context</h3><span class="hint">Key trends for ECE operators</span></div>
+            <div class="card-body">
+              <div class="alert-item">
+                <div class="alert-dot" style="background:var(--navy)"></div>
+                <div>
+                  <div class="alert-text"><strong>Under-5 Population</strong> — Declined 6.4% from 2019 to 2024 (19.6M → 18.3M). Census projects stabilization near 18.4–18.5M through 2034.</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot" style="background:var(--red)"></div>
+                <div>
+                  <div class="alert-text"><strong>U.S. Fertility Rate</strong> — Hit record low of 1.57 births/woman in 2025, down 19.5% from generational average (1973–2010).</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot" style="background:var(--teal)"></div>
+                <div>
+                  <div class="alert-text"><strong>Market Consolidation</strong> — Large childcare chains grew 14–95% in select states; home-based and independent centers declined 4–17%.</div>
+                </div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-dot" style="background:var(--green)"></div>
+                <div>
+                  <div class="alert-text"><strong>Private Preschool Enrollment</strong> — Returned to pre-pandemic levels in 2022–23 for 3–4 year olds. Growth plateau expected.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== COMPETITIVE ASSESSMENT ========== -->
+      <div class="view" id="view-competitive">
+        <div class="grid-2" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-header"><h3>Competitive Position Map</h3><span class="hint">Price vs. Quality — Colleyville E trade area</span></div>
+            <div class="card-body" style="padding:12px">
+              <div class="comp-map">
+                <div class="comp-axis-y">
+                  <span>High<br>Quality</span>
+                  <span style="opacity:.5">Quality</span>
+                  <span>Low<br>Quality</span>
+                </div>
+                <div class="comp-axis-x">
+                  <span>Low Price</span>
+                  <span>High Price</span>
+                </div>
+                <!-- Your school -->
+                <div class="comp-dot" style="width:44px;height:44px;left:62%;top:22%;background:var(--navy);color:var(--gold);font-size:9px;text-align:center;line-height:1.2;padding:4px">
+                  <div>Your<br>School</div>
+                  <div class="comp-tooltip">Your School — $454/mo · Quality Rank 2/18</div>
+                </div>
+                <!-- Competitors -->
+                <div class="comp-dot" style="width:36px;height:36px;left:78%;top:14%;background:var(--teal);color:#fff;font-size:9px;text-align:center;padding:4px">
+                  <div>Primrose</div>
+                  <div class="comp-tooltip">Primrose — $510/mo · Rank 1</div>
+                </div>
+                <div class="comp-dot" style="width:32px;height:32px;left:45%;top:30%;background:var(--border);color:var(--navy);font-size:9px;text-align:center;padding:4px">
+                  <div>TLE</div>
+                  <div class="comp-tooltip">The Learning Experience — $370/mo · Rank 4</div>
+                </div>
+                <div class="comp-dot" style="width:32px;height:32px;left:55%;top:45%;background:var(--border);color:var(--navy);font-size:9px;text-align:center;padding:4px">
+                  <div>KCare</div>
+                  <div class="comp-tooltip">KinderCare — $395/mo · Rank 5</div>
+                </div>
+                <div class="comp-dot" style="width:32px;height:32px;left:30%;top:60%;background:var(--border);color:var(--navy);font-size:9px;text-align:center;padding:4px">
+                  <div>Indep.</div>
+                  <div class="comp-tooltip">Independent Center — $295/mo · Rank 9</div>
+                </div>
+              </div>
+              <div class="footnote">Dot size = Google review volume. Hover for details. Source: Mystery Shopping + Provider Websites.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Quality Rubric — Parent Considerations</h3></div>
+            <div class="card-body">
+              <table class="zone-table">
+                <thead><tr><th>Category</th><th>Your Score</th><th>Comp. Avg</th><th>Gap</th></tr></thead>
+                <tbody>
+                  <tr><td>Teachers</td><td>A</td><td>B+</td><td class="change up">▲ Above</td></tr>
+                  <tr><td>Curriculum</td><td>A−</td><td>B+</td><td class="change up">▲ Above</td></tr>
+                  <tr><td>Indoor Facilities</td><td>B+</td><td>A−</td><td class="change down">▼ Below</td></tr>
+                  <tr><td>Communication</td><td>B</td><td>B+</td><td class="change down">▼ Below</td></tr>
+                  <tr><td>Outdoor Facilities</td><td>A</td><td>B</td><td class="change up">▲ Above</td></tr>
+                  <tr><td>Security</td><td>A</td><td>A</td><td style="color:var(--muted)">— Par</td></tr>
+                  <tr><td>Enrichment</td><td>B−</td><td>B</td><td class="change down">▼ Below</td></tr>
+                  <tr><td>Leadership</td><td>B+</td><td>B</td><td class="change up">▲ Above</td></tr>
+                </tbody>
+              </table>
+              <div class="footnote">A+ is highest. Graded using Tuscany's proprietary ECE rubric. Competitors = top Tier 4/5 in 30-min radius.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Pricing Landscape — Infant &amp; 3-Year-Old</h3><span class="hint">Colleyville E trade area · May 2026</span></div>
+          <div class="card-body">
+            <table class="zone-table">
+              <thead><tr><th>School</th><th>Tier</th><th>Infant / Month</th><th>3YO / Month</th><th>Infant Waitlist</th><th>3YO Waitlist</th><th>Quality Rank</th></tr></thead>
+              <tbody>
+                <tr><td>Primrose</td><td>Tier 5</td><td>$510</td><td>$480</td><td>Yes</td><td>Yes</td><td>1 / 18</td></tr>
+                <tr><td style="font-weight:700">Your School ★</td><td>Tier 5</td><td style="font-weight:700">$454</td><td style="font-weight:700">$420</td><td>No</td><td>No</td><td style="font-weight:700">2 / 18</td></tr>
+                <tr><td>Lightbridge Academy</td><td>Tier 4</td><td>$415</td><td>$390</td><td>Yes — 3YO</td><td>Yes</td><td>3 / 18</td></tr>
+                <tr><td>KinderCare</td><td>Tier 4</td><td>$395</td><td>$370</td><td>No</td><td>No</td><td>5 / 18</td></tr>
+                <tr><td>The Learning Experience</td><td>Tier 4</td><td>$370</td><td>$345</td><td>No</td><td>No</td><td>4 / 18</td></tr>
+                <tr><td>Knowledge Beginnings</td><td>Tier 3</td><td>$295</td><td>$275</td><td>No</td><td>No</td><td>8 / 18</td></tr>
+              </tbody>
+            </table>
+            <div class="footnote">★ = client school. Price rank 1 = most expensive. Waitlists collected via mystery shopping; some providers withheld information.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== MYSTERY SHOPPING ========== -->
+      <div class="view" id="view-mystery">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><h3>Mystery Shop — Colleyville E (In-Person Tour)</h3><span class="hint">Conducted June 10, 2026 · QA: Pass</span></div>
+          <div class="card-body">
+            <div class="shop-grid">
+              <div class="shop-header">Category</div>
+              <div class="shop-header">Score</div>
+              <div class="shop-header">Competitor Avg</div>
+              <div class="shop-header">Notes</div>
+              <div class="shop-header">Action</div>
+
+              <div class="shop-cell">Entrance &amp; Grounds</div>
+              <div class="shop-cell"><div class="shop-grade grade-a">A</div></div>
+              <div class="shop-cell" style="text-align:center">B+</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--muted)">Well-maintained, branded signage clear</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--green)">No action needed</div>
+
+              <div class="shop-cell">Welcome &amp; Responsiveness</div>
+              <div class="shop-cell"><div class="shop-grade grade-b">B</div></div>
+              <div class="shop-cell" style="text-align:center">B+</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--muted)">Director greeting took 8 min; should be &lt;2 min</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--amber)">Coaching needed</div>
+
+              <div class="shop-cell">Classroom Quality</div>
+              <div class="shop-cell"><div class="shop-grade grade-a">A−</div></div>
+              <div class="shop-cell" style="text-align:center">B</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--muted)">Strong teacher-student ratios, curriculum visible</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--green)">Highlight in marketing</div>
+
+              <div class="shop-cell">Outdoor Facilities</div>
+              <div class="shop-cell"><div class="shop-grade grade-a">A</div></div>
+              <div class="shop-cell" style="text-align:center">B−</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--muted)">Best-in-class playground; shopper noted spontaneously</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--green)">Competitive advantage</div>
+
+              <div class="shop-cell">Price / Waitlist Disclosure</div>
+              <div class="shop-cell"><div class="shop-grade grade-c">C+</div></div>
+              <div class="shop-cell" style="text-align:center">B</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--muted)">Director deflected pricing twice; no written quote provided</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--red)">Train director on pricing script</div>
+
+              <div class="shop-cell">Follow-Up</div>
+              <div class="shop-cell"><div class="shop-grade grade-b">B+</div></div>
+              <div class="shop-cell" style="text-align:center">B</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--muted)">Email follow-up received within 2 hrs; personalized</div>
+              <div class="shop-cell" style="font-size:11px;color:var(--green)">Best practice to share</div>
+            </div>
+            <div class="footnote">Shop report QA'd by Tuscany analyst. Shop was repeated at no cost (first attempt: shopper did not qualify as ECE-parent age).</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Phone Shop Summary — Competitor Calls</h3><span class="hint">4 competitors · June 2026</span></div>
+          <div class="card-body">
+            <table class="zone-table">
+              <thead><tr><th>School</th><th>Infant Price Quoted</th><th>3YO Price Quoted</th><th>Infant Waitlist</th><th>Call Quality</th></tr></thead>
+              <tbody>
+                <tr><td>Primrose (Southlake)</td><td>$510/mo</td><td>$480/mo</td><td>Yes</td><td><span class="sat-pill sat-under">A − Excellent</span></td></tr>
+                <tr><td>Lightbridge (Allen)</td><td>$415/mo</td><td>$390/mo</td><td>Yes</td><td><span class="sat-pill sat-bal">B − Good</span></td></tr>
+                <tr><td>KinderCare (Plano)</td><td>$395/mo</td><td>$370/mo</td><td>No</td><td><span class="sat-pill sat-bal">B − Good</span></td></tr>
+                <tr><td>Knowledge Beginnings</td><td>Declined to quote</td><td>$275/mo</td><td>No</td><td><span class="sat-pill sat-over">D − Poor</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== CUSTOMER SENTIMENT STUDY ========== -->
+      <div class="view" id="view-study">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>Enrollment Drivers — Current Families</h3><span class="hint">n=250 · Aug 2024</span></div>
+            <div class="card-body">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Top reasons families enrolled (relative impact)</div>
+              <div class="driver-row">
+                <div class="driver-rank">1</div>
+                <div class="driver-name">Teacher Quality &amp; Warmth</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:91%;background:var(--navy)"></div></div>
+                  <div class="impact-pct">91%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank">2</div>
+                <div class="driver-name">Curriculum &amp; Kindergarten Readiness</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:78%;background:var(--navy)"></div></div>
+                  <div class="impact-pct">78%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank">3</div>
+                <div class="driver-name">Location / Proximity to Home</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:71%;background:var(--teal)"></div></div>
+                  <div class="impact-pct">71%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank">4</div>
+                <div class="driver-name">Safety &amp; Security</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:65%;background:var(--teal)"></div></div>
+                  <div class="impact-pct">65%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank">5</div>
+                <div class="driver-name">Outdoor Facilities</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:54%;background:var(--teal)"></div></div>
+                  <div class="impact-pct">54%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank">6</div>
+                <div class="driver-name">Pricing / Value</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:47%;background:var(--amber)"></div></div>
+                  <div class="impact-pct">47%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank">7</div>
+                <div class="driver-name">Enrichment Programs</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:38%;background:var(--amber)"></div></div>
+                  <div class="impact-pct">38%</div>
+                </div>
+              </div>
+              <div class="footnote">Source: Tuscany Qualitative &amp; Quantitative Jobs-To-Be-Done Survey, n=250. Reproducible methodology allows year-over-year trending.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Retention &amp; Churn Drivers</h3><span class="hint">Why families leave</span></div>
+            <div class="card-body">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Primary reason for disenrollment (past 12 months)</div>
+              <div class="driver-row">
+                <div class="driver-rank" style="background:var(--red)">1</div>
+                <div class="driver-name">Teacher Turnover / Attachment Issues</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:68%;background:var(--red)"></div></div>
+                  <div class="impact-pct">68%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank" style="background:var(--red)">2</div>
+                <div class="driver-name">Communication Breakdown</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:54%;background:var(--red)"></div></div>
+                  <div class="impact-pct">54%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank" style="background:var(--amber)">3</div>
+                <div class="driver-name">Price Increase Without Notice</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:41%;background:var(--amber)"></div></div>
+                  <div class="impact-pct">41%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank" style="background:var(--amber)">4</div>
+                <div class="driver-name">Child Aging Out of Center</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:36%;background:var(--amber)"></div></div>
+                  <div class="impact-pct">36%</div>
+                </div>
+              </div>
+              <div class="driver-row">
+                <div class="driver-rank">5</div>
+                <div class="driver-name">Moved / Change in Commute</div>
+                <div class="driver-impact">
+                  <div class="impact-bar"><div class="impact-fill" style="width:28%;background:var(--border)"></div></div>
+                  <div class="impact-pct">28%</div>
+                </div>
+              </div>
+              <div style="margin-top:16px;padding:12px;background:rgba(2,192,154,.07);border-radius:8px;border-left:3px solid var(--mint);">
+                <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px">Key Implication</div>
+                <div style="font-size:12.5px;color:var(--muted)">Teacher retention and proactive communication are the two highest-leverage levers for reducing churn. Staff NPS tracking (core module) provides an early warning signal for both.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== AI TRAINING ========== -->
+      <div class="view" id="view-ai">
+        <div class="welcome-banner" style="background:linear-gradient(120deg,#1a2533,#1E3A5F)">
+          <h1>AI Enablement Training</h1>
+          <p>Hands-on training to help your team use AI tools confidently and securely in day-to-day ECE operations — covering FERPA compliance, family communication, operational efficiency, and more.</p>
+        </div>
+        <div class="grid-3">
+          <div class="usecase-card">
+            <div class="usecase-icon">🔒</div>
+            <div class="usecase-title">AI Safety &amp; FERPA Compliance</div>
+            <div class="usecase-desc">Know what family and student data can and cannot flow through AI tools. Practical protocols for directors and central staff.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">✍️</div>
+            <div class="usecase-title">Family Communication</div>
+            <div class="usecase-desc">Draft newsletters, incident reports, and enrollment follow-ups faster — with brand-consistent tone and legally safe language.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">📊</div>
+            <div class="usecase-title">Data Interpretation</div>
+            <div class="usecase-desc">Help directors understand and act on platform data — saturation maps, NPS trends, mystery shop findings — without analyst hand-holding.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">📅</div>
+            <div class="usecase-title">Operations &amp; Scheduling</div>
+            <div class="usecase-desc">Use AI for staff scheduling optimization, supply ordering, and coverage planning to reduce director time on admin tasks.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">🎯</div>
+            <div class="usecase-title">Marketing &amp; Enrollment</div>
+            <div class="usecase-desc">Generate tour follow-up scripts, social media content, and inquiry response templates grounded in your competitive positioning data.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">📚</div>
+            <div class="usecase-title">Ongoing Resource Library</div>
+            <div class="usecase-desc">Curated, up-to-date prompts, tools, and use-case guides — maintained by Tuscany and refreshed as AI capabilities evolve.</div>
+          </div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px;font-size:13px;color:var(--muted)">
+          <strong style="color:var(--navy)">Delivery:</strong> Hands-on workshop (half-day or full-day) + 90-day curated resource access. &nbsp;
+          <strong style="color:var(--navy)">Format:</strong> On-site or virtual. &nbsp;
+          <strong style="color:var(--navy)">Audience:</strong> Directors, area managers, central operations staff.
+        </div>
+      </div>
+
+      <!-- ========== USE CASES ========== -->
+      <div class="view" id="view-usecases">
+        <div class="usecase-grid">
+          <div class="usecase-card">
+            <div class="usecase-icon">📍</div>
+            <div class="usecase-title">De Novo Site Selection</div>
+            <div class="usecase-desc">Identify the strongest neighborhoods and trade areas for new schools using the Saturation Index, demographics, and Universal Pre-K policy tailwinds.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">💲</div>
+            <div class="usecase-title">New School Pricing Strategy</div>
+            <div class="usecase-desc">Set defensible opening prices for new locations using competitor tuition benchmarks by classroom and trade area.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">🏥</div>
+            <div class="usecase-title">Enrollment Diagnostics</div>
+            <div class="usecase-desc">Combine internal utilization data, mystery shop rankings, NPS scores, and demographic analysis to identify potential occupancy pain points.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">🎯</div>
+            <div class="usecase-title">School Performance Improvement</div>
+            <div class="usecase-desc">Benchmark each school against local competitors on price and the quality factors parents weigh most — translating gaps into targeted operational actions.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">🤝</div>
+            <div class="usecase-title">M&amp;A Quality &amp; Price Diligence</div>
+            <div class="usecase-desc">Surface acquisition candidates and stress-test targets using competitive positioning, brand sentiment, and price/quality benchmarks against local peers.</div>
+          </div>
+          <div class="usecase-card">
+            <div class="usecase-icon">🔄</div>
+            <div class="usecase-title">Brand Conversion Playbook</div>
+            <div class="usecase-desc">Guide the transition of acquisition targets — informing pricing, parent communications, curriculum rollout, and occupancy recovery if needed.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Case Study: Brand Conversion Success</h3></div>
+          <div class="card-body" style="font-size:13px;color:var(--muted);line-height:1.6">
+            <p><strong style="color:var(--navy)">Background:</strong> A chain of 450+ franchised schools in 30 states (60,000 children, PE-owned) acquired a Tier 3 school and needed to transition it to the new brand.</p>
+            <p style="margin-top:8px"><strong style="color:var(--navy)">Challenge:</strong> Train staff on a more robust curriculum, update indoor and outdoor facilities, and communicate changes to existing families without triggering disenrollment.</p>
+            <p style="margin-top:8px"><strong style="color:var(--navy)">Result:</strong> Occupancy increased from <strong style="color:var(--red)">47%</strong> to <strong style="color:var(--green)">84%</strong> over 4 years. Any disenrolled families were replaced with new families, maintaining and increasing occupancy throughout the transition.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== PRICING ========== -->
+      <div class="view" id="view-pricing">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'price-modules')">Module Pricing</div>
+          <div class="tab" onclick="switchTab(this,'price-volume')">Volume Discounts</div>
+        </div>
+        <div class="tab-panel active" id="tab-price-modules">
+          <div class="card">
+            <div class="card-header"><h3>Early Care Data Services — Pricing Guide</h3></div>
+            <div class="card-body">
+              <table class="pricing-table">
+                <thead><tr><th>Module</th><th>Type</th><th>List Price</th><th>Volume Discounts</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Market Saturation Index</strong></td>
+                    <td><span class="module-tag tag-core">Core</span></td>
+                    <td class="price-highlight">$15,000 / year</td>
+                    <td>Annual subscription; MSA-level pricing available</td>
+                  </tr>
+                  <tr>
+                    <td><strong>50 State Pre-K Tracker</strong></td>
+                    <td><span class="module-tag tag-core">Core</span></td>
+                    <td class="price-highlight">$15,000 / year</td>
+                    <td>Annual subscription; real-time news alerts included</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Online Sentiment Monitoring</strong></td>
+                    <td><span class="module-tag tag-core">Core</span></td>
+                    <td class="price-highlight">$45 / center / month</td>
+                    <td>Vol. discounts: 11–30 centers = $40; 31–100 = $35; 100+ = $30</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Competitive Performance Assessment</strong></td>
+                    <td><span class="module-tag tag-addon">Add-On</span></td>
+                    <td class="price-highlight">$3,500 / catchment area</td>
+                    <td>6–10: $3,325; 11–29: $3,150; 30–44: $2,975; 45+: $2,800</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Managed Mystery Shopping</strong></td>
+                    <td><span class="module-tag tag-addon">Add-On</span></td>
+                    <td class="price-highlight">$75 / call</td>
+                    <td>400–999 calls: $72.50; 1,000–2,499: $70; 2,500–4,999: $65; 5,000+: ask</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Customer Sentiment Study</strong></td>
+                    <td><span class="module-tag tag-addon">Add-On</span></td>
+                    <td class="price-highlight">$29K–$35K (first)</td>
+                    <td>Annual repeat: $3,500–$8,700 (n=100–250); reproducible methodology</td>
+                  </tr>
+                  <tr>
+                    <td><strong>AI Enablement Training</strong></td>
+                    <td><span class="module-tag tag-addon">Add-On</span></td>
+                    <td class="price-highlight">Contact for quote</td>
+                    <td>Half-day or full-day workshop; on-site or virtual</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="footnote" style="margin-top:12px">Previously assessed catchment areas receive a $500/area discount on Competitive Performance Assessment renewals. All prices in USD. Contact Tuscany Strategy for bundle pricing.</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-panel" id="tab-price-volume">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-header"><h3>Competitive Assessment — Volume Tiers</h3></div>
+              <div class="card-body">
+                <table class="pricing-table">
+                  <thead><tr><th># Catchment Areas</th><th>List Price</th><th>Discount</th><th>Net Price</th></tr></thead>
+                  <tbody>
+                    <tr><td>1–5</td><td>$3,500</td><td>—</td><td class="price-highlight">$3,500</td></tr>
+                    <tr><td>6–10</td><td>$3,500</td><td>−5%</td><td class="price-highlight">$3,325</td></tr>
+                    <tr><td>11–29</td><td>$3,500</td><td>−10%</td><td class="price-highlight">$3,150</td></tr>
+                    <tr><td>30–44</td><td>$3,500</td><td>−15%</td><td class="price-highlight">$2,975</td></tr>
+                    <tr><td>45+</td><td>$3,500</td><td>−20%</td><td class="price-highlight">$2,800</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>Mystery Shopping — Volume Tiers</h3></div>
+              <div class="card-body">
+                <table class="pricing-table">
+                  <thead><tr><th># Calls</th><th>List Price</th><th>Discount</th><th>Net Price</th></tr></thead>
+                  <tbody>
+                    <tr><td>1–399</td><td>$75</td><td>—</td><td class="price-highlight">$75.00</td></tr>
+                    <tr><td>400–999</td><td>$75</td><td>−$2.50</td><td class="price-highlight">$72.50</td></tr>
+                    <tr><td>1,000–2,499</td><td>$75</td><td>−$5.00</td><td class="price-highlight">$70.00</td></tr>
+                    <tr><td>2,500–4,999</td><td>$75</td><td>−$10.00</td><td class="price-highlight">$65.00</td></tr>
+                    <tr><td>5,000+</td><td>$75</td><td>Contact TSC</td><td class="price-highlight">Custom</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+  const titles = {
+    overview: 'Platform Overview',
+    saturation: 'Saturation Index',
+    upk: '50-State Pre-K Tracker',
+    sentiment: 'Online Sentiment Monitor',
+    benchmark: 'Operational Benchmarks',
+    database: 'Tiered Provider Database',
+    demographics: 'Demographic Landscape',
+    competitive: 'Competitive Performance Assessment',
+    mystery: 'Managed Mystery Shopping',
+    study: 'Customer Sentiment Study',
+    ai: 'AI Enablement Training',
+    usecases: 'Use Cases',
+    pricing: 'Pricing',
+  };
+
+  function showView(id, navEl) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelector('#view-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (navEl) navEl.classList.add('active');
+    document.getElementById('topbar-title').textContent = titles[id] || id;
+  }
+
+  function switchTab(tabEl, panelId) {
+    const container = tabEl.closest('.view') || tabEl.parentElement.parentElement;
+    container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    container.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tabEl.classList.add('active');
+    document.getElementById('tab-' + panelId)?.classList.add('active');
+  }
+</script>
+</body>
+</html>
