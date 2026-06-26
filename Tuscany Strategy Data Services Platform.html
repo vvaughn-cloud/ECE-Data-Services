@@ -384,6 +384,8 @@ section:first-of-type{padding-top:52px}
 /* ── SCROLL SMOOTH ── */
 .content-wrap{padding-top:52px}
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -500,51 +502,54 @@ section:first-of-type{padding-top:52px}
         <div class="card-head"><h3>Baltimore MSA — Saturation Index</h3><span class="hint">Tier 4/5 · Supply vs. Demand</span></div>
         <div class="card-body">
           <p style="font-size:13px;color:var(--gray);margin-bottom:16px">Estimated High-HHI Under-5 Pop: <strong style="color:var(--navy)">22,000</strong> &nbsp;·&nbsp; Tier 4/5 Centers: <strong style="color:var(--navy)">77</strong></p>
-          <div class="map-area">
-            <svg viewBox="0 0 420 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
-              <rect x="10" y="10" width="90" height="58" rx="5" fill="rgba(39,174,96,.15)" stroke="#27AE60" stroke-width="1.5"/>
-              <text x="55" y="42" text-anchor="middle" font-size="10" fill="#1a6b3a" font-weight="700" font-family="Nunito Sans,Arial">Columbia</text>
-              <text x="55" y="56" text-anchor="middle" font-size="9" fill="#1a6b3a" font-family="Nunito Sans,Arial">Underserved</text>
-
-              <rect x="115" y="10" width="90" height="58" rx="5" fill="rgba(192,57,43,.15)" stroke="#C0392B" stroke-width="1.5"/>
-              <text x="160" y="42" text-anchor="middle" font-size="10" fill="#922b21" font-weight="700" font-family="Nunito Sans,Arial">Inner Harbor</text>
-              <text x="160" y="56" text-anchor="middle" font-size="9" fill="#922b21" font-family="Nunito Sans,Arial">Saturated</text>
-
-              <rect x="220" y="10" width="90" height="58" rx="5" fill="rgba(215,117,34,.15)" stroke="#D98636" stroke-width="1.5"/>
-              <text x="265" y="42" text-anchor="middle" font-size="10" fill="#8b5e0a" font-weight="700" font-family="Nunito Sans,Arial">Ellicott City</text>
-              <text x="265" y="56" text-anchor="middle" font-size="9" fill="#8b5e0a" font-family="Nunito Sans,Arial">Balanced</text>
-
-              <rect x="325" y="10" width="90" height="58" rx="5" fill="rgba(39,174,96,.15)" stroke="#27AE60" stroke-width="1.5"/>
-              <text x="370" y="42" text-anchor="middle" font-size="10" fill="#1a6b3a" font-weight="700" font-family="Nunito Sans,Arial">Towson</text>
-              <text x="370" y="56" text-anchor="middle" font-size="9" fill="#1a6b3a" font-family="Nunito Sans,Arial">Underserved</text>
-
-              <rect x="10" y="84" width="90" height="58" rx="5" fill="rgba(215,117,34,.15)" stroke="#D98636" stroke-width="1.5"/>
-              <text x="55" y="116" text-anchor="middle" font-size="10" fill="#8b5e0a" font-weight="700" font-family="Nunito Sans,Arial">Catonsville</text>
-              <text x="55" y="130" text-anchor="middle" font-size="9" fill="#8b5e0a" font-family="Nunito Sans,Arial">Balanced</text>
-
-              <rect x="115" y="84" width="90" height="58" rx="5" fill="rgba(192,57,43,.15)" stroke="#C0392B" stroke-width="1.5"/>
-              <text x="160" y="116" text-anchor="middle" font-size="10" fill="#922b21" font-weight="700" font-family="Nunito Sans,Arial">Dundalk</text>
-              <text x="160" y="130" text-anchor="middle" font-size="9" fill="#922b21" font-family="Nunito Sans,Arial">Saturated</text>
-
-              <rect x="220" y="84" width="90" height="58" rx="5" fill="rgba(39,174,96,.28)" stroke="#27AE60" stroke-width="2.5"/>
-              <text x="265" y="110" text-anchor="middle" font-size="10" fill="#1a6b3a" font-weight="700" font-family="Nunito Sans,Arial">Pikesville</text>
-              <text x="265" y="122" text-anchor="middle" font-size="9" fill="#1a6b3a" font-family="Nunito Sans,Arial">Strong</text>
-              <text x="265" y="134" text-anchor="middle" font-size="9" fill="#1a6b3a" font-weight="700" font-family="Nunito Sans,Arial">Opportunity ★</text>
-
-              <rect x="325" y="84" width="90" height="58" rx="5" fill="rgba(39,174,96,.15)" stroke="#27AE60" stroke-width="1.5"/>
-              <text x="370" y="116" text-anchor="middle" font-size="10" fill="#1a6b3a" font-weight="700" font-family="Nunito Sans,Arial">Bel Air</text>
-              <text x="370" y="130" text-anchor="middle" font-size="9" fill="#1a6b3a" font-family="Nunito Sans,Arial">Underserved</text>
-
-              <!-- Legend -->
-              <rect x="10" y="155" width="11" height="11" rx="2" fill="rgba(39,174,96,.2)" stroke="#27AE60"/>
-              <text x="25" y="164" font-size="9" fill="#595959" font-family="Nunito Sans,Arial">Underserved / Opportunity</text>
-              <rect x="165" y="155" width="11" height="11" rx="2" fill="rgba(215,117,34,.15)" stroke="#D98636"/>
-              <text x="179" y="164" font-size="9" fill="#595959" font-family="Nunito Sans,Arial">Balanced</text>
-              <rect x="250" y="155" width="11" height="11" rx="2" fill="rgba(192,57,43,.15)" stroke="#C0392B"/>
-              <text x="264" y="164" font-size="9" fill="#595959" font-family="Nunito Sans,Arial">Saturated</text>
-              <text x="10" y="195" font-size="9" fill="#7C9AB3" font-family="Nunito Sans,Arial">Index = High-HHI Under-5 Population / Tier 4/5 Capacity · Source: US Census, Lightcast, State Licensing, Tuscany Analysis</text>
-            </svg>
+          <div id="balt-map" style="width:100%;height:340px;border-radius:6px;border:1px solid var(--border);overflow:hidden"></div>
+          <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:13px;height:13px;border-radius:2px;background:rgba(39,174,96,.45);border:1.5px solid #27AE60;display:inline-block"></span>Underserved / Opportunity</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:13px;height:13px;border-radius:2px;background:rgba(215,117,34,.45);border:1.5px solid #D98636;display:inline-block"></span>Balanced</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:13px;height:13px;border-radius:2px;background:rgba(192,57,43,.45);border:1.5px solid #C0392B;display:inline-block"></span>Saturated</span>
           </div>
+          <script>
+          (function(){
+            var zones = [
+              {name:"Columbia",lat:39.203,lng:-76.861,status:"underserved",demand:8.4,t4:3,t5:1},
+              {name:"Inner Harbor",lat:39.284,lng:-76.614,status:"saturated",demand:6.1,t4:14,t5:8},
+              {name:"Ellicott City",lat:39.267,lng:-76.798,status:"balanced",demand:7.8,t4:6,t5:3},
+              {name:"Towson",lat:39.401,lng:-76.601,status:"underserved",demand:9.1,t4:2,t5:1},
+              {name:"Catonsville",lat:39.272,lng:-76.732,status:"balanced",demand:6.9,t4:5,t5:2},
+              {name:"Dundalk",lat:39.271,lng:-76.498,status:"saturated",demand:4.2,t4:9,t5:5},
+              {name:"Pikesville ★",lat:39.377,lng:-76.727,status:"strong",demand:9.6,t4:1,t5:0},
+              {name:"Bel Air",lat:39.535,lng:-76.348,status:"underserved",demand:8.0,t4:4,t5:1}
+            ];
+            var colors = {
+              underserved:{fill:"rgba(39,174,96,0.35)",stroke:"#27AE60",label:"Underserved"},
+              balanced:   {fill:"rgba(215,117,34,0.35)",stroke:"#D98636",label:"Balanced"},
+              saturated:  {fill:"rgba(192,57,43,0.35)", stroke:"#C0392B",label:"Saturated"},
+              strong:     {fill:"rgba(22,130,60,0.55)", stroke:"#1a6b3a",label:"Strong Opportunity"}
+            };
+            var map = L.map('balt-map',{scrollWheelZoom:false}).setView([39.32,-76.65],10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+              attribution:'© OpenStreetMap contributors',maxZoom:14
+            }).addTo(map);
+            zones.forEach(function(z){
+              var c = colors[z.status];
+              var r = z.status==='strong' ? 4000 : 3200;
+              L.circle([z.lat,z.lng],{
+                radius:r,color:c.stroke,fillColor:c.fill,fillOpacity:0.8,weight:2
+              }).addTo(map).bindPopup(
+                '<strong>'+z.name+'</strong><br>Status: '+c.label+
+                '<br>Demand Score: '+z.demand+
+                '<br>T4 Supply: '+z.t4+' &nbsp; T5 Supply: '+z.t5
+              );
+              L.marker([z.lat,z.lng],{
+                icon:L.divIcon({
+                  className:'',
+                  html:'<div style="background:'+c.stroke+';color:#fff;font-size:10px;font-weight:700;padding:2px 5px;border-radius:3px;white-space:nowrap;font-family:Nunito Sans,Arial">'+z.name+'</div>',
+                  iconAnchor:[0,-12]
+                })
+              }).addTo(map);
+            });
+          })();
+          </script>
         </div>
       </div>
       <div class="card">
@@ -718,30 +723,161 @@ section:first-of-type{padding-top:52px}
 
     <div class="g2">
       <div class="card">
-        <div class="card-head"><h3>Quality/Price Position Map</h3><span class="hint">Colleyville E trade area · hover for details</span></div>
-        <div class="card-body" style="padding:12px">
-          <div class="comp-map">
-            <div class="axis-lbl" style="left:8px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center">Quality ↑</div>
-            <div class="axis-lbl" style="bottom:8px;left:50%;transform:translateX(-50%)">Price →</div>
-            <!-- Your school -->
-            <div class="comp-dot" style="width:52px;height:52px;left:60%;top:20%;background:var(--orange);color:var(--white);text-align:center;padding:5px;font-size:9px;line-height:1.3">
-              <div>Your<br>School</div>
-              <div class="comp-tooltip">Your School · $454/mo · Quality Rank 2/18</div>
-            </div>
-            <div class="comp-dot" style="width:42px;height:42px;left:77%;top:12%;background:var(--navy);color:var(--white);text-align:center;padding:4px;font-size:9px">
-              Primrose<div class="comp-tooltip">Primrose · $510/mo · Rank 1/18</div>
-            </div>
-            <div class="comp-dot" style="width:36px;height:36px;left:44%;top:32%;background:var(--blue-mid);color:var(--white);text-align:center;padding:3px;font-size:9px">
-              TLE<div class="comp-tooltip">The Learning Experience · $370/mo · Rank 4</div>
-            </div>
-            <div class="comp-dot" style="width:36px;height:36px;left:52%;top:48%;background:var(--blue-light);color:var(--white);text-align:center;padding:3px;font-size:9px">
-              KCare<div class="comp-tooltip">KinderCare · $395/mo · Rank 5</div>
-            </div>
-            <div class="comp-dot" style="width:32px;height:32px;left:28%;top:62%;background:var(--border);color:var(--gray);text-align:center;padding:3px;font-size:9px">
-              Indep.<div class="comp-tooltip">Independent · $295/mo · Rank 9</div>
-            </div>
+        <div class="card-head"><h3>Competitive Position Map</h3><span class="hint">Example view · scroll right for all quality categories</span></div>
+        <div class="card-body" style="padding:0;overflow-x:auto">
+          <style>
+            .cpm-wrap{min-width:1100px}
+            .cpm-table{width:100%;border-collapse:collapse;font-size:11.5px;font-family:'Nunito Sans',Arial,sans-serif}
+            .cpm-table th,.cpm-table td{border:1px solid #ddd;padding:0}
+            .cpm-table thead tr:first-child th{background:#f0f0f0;font-weight:700;font-size:10px;color:#153D64;padding:6px 8px;white-space:nowrap;vertical-align:bottom}
+            .cpm-table .rot-header{height:90px;width:28px;padding:0;vertical-align:bottom;text-align:left}
+            .cpm-table .rot-header span{display:block;transform:rotate(-55deg) translateX(-8px);transform-origin:left bottom;white-space:nowrap;font-size:10px;font-weight:700;color:#153D64;padding-bottom:4px;width:90px}
+            .cpm-table td{padding:5px 7px;vertical-align:middle;color:#595959}
+            .cpm-table tbody tr:nth-child(even){background:#fafafa}
+            .cpm-table tbody tr.client-row td{font-weight:700;color:#153D64;background:#EEF3F8}
+            .cpm-table tbody tr.client-row td:first-child{border-left:3px solid #153D64}
+            .grd{display:inline-block;font-size:11px;font-weight:700;text-align:center;min-width:20px}
+            .grd-aplus{color:#0a5c2e}.grd-a{color:#1a6b3a}.grd-b{color:#153D64}.grd-dash{color:#999}
+            .cpm-table td.name-col{min-width:155px;font-size:11.5px}
+            .cpm-table td.num-col{text-align:center;min-width:42px}
+            .cpm-table td.grade-col{text-align:center;min-width:28px;padding:4px 3px}
+            .tier-badge{display:inline-block;background:#153D64;color:#fff;border-radius:3px;padding:1px 5px;font-size:10px;font-weight:700}
+            .tier-badge.t4{background:#5F788C}
+            .tier-badge.t3{background:#9aabb8;color:#153D64}
+          </style>
+          <div class="cpm-wrap">
+          <table class="cpm-table">
+            <thead>
+              <tr>
+                <th rowspan="2" class="name-col" style="min-width:155px">Center Name</th>
+                <th rowspan="2" style="min-width:36px;text-align:center">Tier</th>
+                <th colspan="2" style="text-align:center;background:#e8edf2">Weekly Infant</th>
+                <th colspan="2" style="text-align:center;background:#f0f0f0">Weekly 2YO</th>
+                <th colspan="2" style="text-align:center;background:#e8edf2">Weekly 4YO</th>
+                <th colspan="2" style="text-align:center;background:#f0f0f0">Google Reviews</th>
+                <th class="rot-header"><span>Location</span></th>
+                <th class="rot-header"><span>Entrance &amp; Grounds</span></th>
+                <th class="rot-header"><span>Outdoor Facilities</span></th>
+                <th class="rot-header"><span>Indoor Facilities</span></th>
+                <th class="rot-header"><span>Health Protocols</span></th>
+                <th class="rot-header"><span>Security Measures</span></th>
+                <th class="rot-header"><span>Curriculum</span></th>
+                <th class="rot-header"><span>Enrichment</span></th>
+                <th class="rot-header"><span>Leadership Team</span></th>
+                <th class="rot-header"><span>Meals</span></th>
+                <th class="rot-header"><span>Nutrition &amp; Table Etiquette</span></th>
+                <th class="rot-header"><span>Teachers</span></th>
+                <th class="rot-header"><span>Communication</span></th>
+                <th class="rot-header"><span>Billing &amp; Onboarding</span></th>
+                <th class="rot-header"><span>Awards &amp; Recognition</span></th>
+                <th class="rot-header"><span>School Experience</span></th>
+              </tr>
+              <tr>
+                <th style="text-align:center;background:#e8edf2">Price</th>
+                <th style="text-align:center;background:#e8edf2">Waitlist</th>
+                <th style="text-align:center;background:#f0f0f0">Price</th>
+                <th style="text-align:center;background:#f0f0f0">Waitlist</th>
+                <th style="text-align:center;background:#e8edf2">Price</th>
+                <th style="text-align:center;background:#e8edf2">Waitlist</th>
+                <th style="text-align:center;background:#f0f0f0">Rating</th>
+                <th style="text-align:center;background:#f0f0f0"># of Reviews</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="name-col">Bright Horizons</td>
+                <td class="num-col"><span class="tier-badge">5</span></td>
+                <td class="num-col">$665</td><td class="num-col">Yes</td>
+                <td class="num-col">$612</td><td class="num-col">Yes</td>
+                <td class="num-col">$530</td><td class="num-col">No</td>
+                <td class="num-col">3.4</td><td class="num-col">14</td>
+                <td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td>
+              </tr>
+              <tr>
+                <td class="name-col">Bright Horizons</td>
+                <td class="num-col"><span class="tier-badge">5</span></td>
+                <td class="num-col">$660</td><td class="num-col">Yes</td>
+                <td class="num-col">$612</td><td class="num-col">Yes</td>
+                <td class="num-col">$530</td><td class="num-col">Yes</td>
+                <td class="num-col">5.0</td><td class="num-col">17</td>
+                <td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td>
+              </tr>
+              <tr class="client-row">
+                <td class="name-col">Client – Post-Construction</td>
+                <td class="num-col"><span class="tier-badge">5</span></td>
+                <td class="num-col">$612</td><td class="num-col">Yes</td>
+                <td class="num-col">$531</td><td class="num-col">No</td>
+                <td class="num-col">$439</td><td class="num-col">No</td>
+                <td class="num-col">3.6</td><td class="num-col">14</td>
+                <td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td>
+              </tr>
+              <tr>
+                <td class="name-col">Local Competitor</td>
+                <td class="num-col"><span class="tier-badge">5</span></td>
+                <td class="num-col">$579</td><td class="num-col">Yes</td>
+                <td class="num-col">$488</td><td class="num-col">Yes</td>
+                <td class="num-col">$443</td><td class="num-col">Yes</td>
+                <td class="num-col">4.0</td><td class="num-col">11</td>
+                <td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td>
+              </tr>
+              <tr>
+                <td class="name-col">Kiddie Academy</td>
+                <td class="num-col"><span class="tier-badge t4">4</span></td>
+                <td class="num-col">$559</td><td class="num-col">Yes</td>
+                <td class="num-col">$518</td><td class="num-col">Yes</td>
+                <td class="num-col">$445</td><td class="num-col">Yes</td>
+                <td class="num-col">4.4</td><td class="num-col">42</td>
+                <td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td>
+              </tr>
+              <tr>
+                <td class="name-col">Local Competitor</td>
+                <td class="num-col"><span class="tier-badge t4">4</span></td>
+                <td class="num-col">$525</td><td class="num-col">Yes</td>
+                <td class="num-col">$440</td><td class="num-col">Yes</td>
+                <td class="num-col">$388</td><td class="num-col">Yes</td>
+                <td class="num-col">4.0</td><td class="num-col">33</td>
+                <td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td>
+              </tr>
+              <tr class="client-row">
+                <td class="name-col">Client – Pre-Construction</td>
+                <td class="num-col"><span class="tier-badge t4">4</span></td>
+                <td class="num-col">$490</td><td class="num-col">Yes</td>
+                <td class="num-col">$462</td><td class="num-col">Yes</td>
+                <td class="num-col">$386</td><td class="num-col">Yes</td>
+                <td class="num-col">—</td><td class="num-col">—</td>
+                <td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-aplus">A+</span></td><td class="grade-col"><span class="grd grd-b">B</span></td>
+              </tr>
+              <tr class="client-row">
+                <td class="name-col">Client – Pre-Acquisition</td>
+                <td class="num-col"><span class="tier-badge t3">3</span></td>
+                <td class="num-col">$445</td><td class="num-col">Yes</td>
+                <td class="num-col">—</td><td class="num-col">Yes</td>
+                <td class="num-col">$323</td><td class="num-col">No</td>
+                <td class="num-col">4.8</td><td class="num-col">5</td>
+                <td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td>
+              </tr>
+              <tr>
+                <td class="name-col">Local Competitor</td>
+                <td class="num-col"><span class="tier-badge t3">3</span></td>
+                <td class="num-col">$351</td><td class="num-col">Yes</td>
+                <td class="num-col">$323</td><td class="num-col">Yes</td>
+                <td class="num-col">$308</td><td class="num-col">Yes</td>
+                <td class="num-col">4.1</td><td class="num-col">13</td>
+                <td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td>
+              </tr>
+              <tr>
+                <td class="name-col">KinderCare</td>
+                <td class="num-col"><span class="tier-badge t3">3</span></td>
+                <td class="num-col">$525</td><td class="num-col">Yes</td>
+                <td class="num-col">$483</td><td class="num-col">Yes</td>
+                <td class="num-col">$394</td><td class="num-col">Yes</td>
+                <td class="num-col">3.7</td><td class="num-col">10</td>
+                <td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-a">A</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td><td class="grade-col"><span class="grd grd-b">B</span></td>
+              </tr>
+            </tbody>
+          </table>
           </div>
-          <p class="fn">Dot size = Google review volume. Source: Mystery Shopping + Provider Websites. A+ is the highest score a center can achieve in any Parent Consideration Category.</p>
+          <p class="fn" style="padding:8px 12px">Ratings based on what a prospective parent can assess. Select competitors within a 30-min drive were shopped. A+ is the highest score achievable. "—" = information not available. Source: Provider Websites, Google Reviews, Mystery Shopping.</p>
         </div>
       </div>
       <div class="card">
